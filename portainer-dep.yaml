@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portainer-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: port-dep
+  template:
+    metadata:
+      labels:
+        app: port-dep
+    spec:
+      containers:
+      - name: port-container
+        image: portainer/portainer-ce
+        ports:
+        - containerPort: 8000
+        - containerPort: 9000
+        volumeMounts:
+        - name: port-volume
+          mountPath: /var/run/docker.sock
+      volumes:
+      - name: port-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: port-service
+spec:
+  type: NodePort
+  selector:
+    app: port-dep
+  ports:
+  - name: port1
+    protocol: TCP
+    port: 7418
+    targetPort: 8000
+    nodePort: 31600
+  - name: port2
+    protocol: TCP
+    port: 7417
+    targetPort: 9000
+    nodePort: 31601
