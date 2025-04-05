@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: ng-dep
+  template:
+    metadata:
+      labels:
+        app: ng-dep
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: ng-volume
+          mountPath: /data
+      volumes:
+      - name: ng-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ng-service
+spec:
+  type: NodePort
+  selector:
+    app: ng-dep
+  ports:
+  - protocol: TCP
+    port: 9632
+    targetPort: 80
+    nodePort: 31598

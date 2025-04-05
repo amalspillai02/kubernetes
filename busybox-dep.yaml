@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: busybox-dep
+  template:
+    metadata:
+      labels:
+        app: busybox-dep
+    spec:
+      containers:
+      - name: busybox-container
+        image: busybox:latest
+        command: ["tail","-f","/dev/null"]

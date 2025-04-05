@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: httpd-dep
+  template:
+    metadata:
+      labels:
+        app: httpd-dep
+    spec:
+      containers:
+      - name: httpd-container
+        image: httpd:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: httpd-volume
+          mountPath: /data
+      volumes:
+      - name: httpd-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpd-service
+spec:
+  type: NodePort
+  selector:
+    app: httpd-dep
+  ports:
+  - protocol: TCP
+    port: 9633
+    targetPort: 80
+    nodePort: 31599
+
