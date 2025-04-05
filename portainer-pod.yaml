@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: portainer-pod
+  labels:
+    app: port
+spec:
+  containers:
+  - name: portainer-container
+    image: portainer/portainer-ce
+    ports:
+    - containerPort: 8000
+    - containerPort: 9000
+    volumeMounts:
+    - name: portainer-volume
+      mountPath: /var/run/docker.sock
+  volumes:
+  - name: portainer-volume
+    emptyDir:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: portainer-service
+spec:
+  type: NodePort
+  selector:
+    app: port
+  ports:
+  - name: port1
+    protocol: TCP
+    port: 7412
+    targetPort: 8000
+    nodePort: 31100
+  - name: port2
+    protocol: TCP
+    port: 7413
+    targetPort: 9000
+    nodePort: 31101
